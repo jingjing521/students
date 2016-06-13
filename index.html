@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="stu">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/materialize/0.97.6/css/materialize.css">
+</head>
+<body ng-controller="control">
+<!-- <input type="text" name="name" value="" ng-model="xin">
+<p>{{xin}}</p>
+<h1>{{num}}</h1>
+<button ng-click="change()">update</button> -->
+<nav>
+  <div class="nav-wrapper">
+  <a href="#" class="brand-logo">Logo</a>
+  <ul id="nav-mobile" class="right hide-on-med-and-down">
+    <li ng-click="type ='table'" ng-class="{yellow:type === 'table'}"><a href="#">表格</a></li>
+    <li  ng-click="type ='card'" ng-class="{yellow:type === 'card'}"><a href="#">卡片</a></li>
+  </ul>
+  </div>
+</nav>
+<!-- 表格 -->
+<div class="container">
+<!-- card -->
+   <div class="row" ng-show = "type === 'card'">
+     <div class="col s4" ng-repeat = "(k,v) in students" >
+       <div class="row">
+           <div class="col s12 m6">
+             <div class="card blue-grey darken-1">
+               <div class="card-content white-text">
+                 <span class="card-title">{{v.name}}</span>
+               </div>
+               <div class="card-action">
+                 <a href="#">{{v.xuehao}}</a>
+                 <a href='#'>{{v.age}}</a>
+               </div>
+             </div>
+           </div>
+          </div>
+     </div>
+   </div>
+
+
+<!--  table-->
+  <table class="striped centered"  ng-show = "type === 'table'">
+    <thead>
+      <tr>
+         <th>ID</th>
+        <th>姓名</th>
+        <th>学号</th>
+        <th>年龄</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat = "(k,v) in students">
+        <td>{{$index+1}}</td>
+        <td><input type="text" value="v.name" ng-model = "v.name"  ng-blur="saveData()"></td>
+        <td><input type="text" value="v.xuehao" ng-model = "v.xuehao"  ng-blur="saveData()"></td>
+        <td><input type="text" value="v.age" ng-model = "v.age"  ng-blur="saveData()"></td>
+        <td ng-click ="delStu(k)">删除</td>
+      </tr>
+      <tr ng-if = "students.length !== 0">
+        <td colspan="5">{{students.length}}</td>
+      </tr>
+      <tr>
+        <td colspan="5" ng-click = "addStu()"><i class="mdi-content-add">+</i></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<script src="angular.js"></script>
+<script src="angular-animate.js"></script>
+</body>
+<script>
+var stu = angular.module('stu',[]);
+// 控制器
+stu.controller('control',['$scope',function($scope){
+  console.log($scope)
+   $scope.type = "table";
+   $scope.num = Math.random();
+   $scope.change = function(){
+     this.num = Math.random();
+   }
+   // 保存数据
+    $scope.saveData = function(){
+        localStorage.stu = angular.toJson($scope.student1s);
+    }
+    if( localStorage.stu ){
+          $scope.students = angular.fromJson( localStorage.stu);
+    }else{
+      $scope.students = [
+        {name:'a',xuehao:201314,age:18},
+        {name:'all',xuehao:201315,age:50},
+        {name:'blue',xuehao:201316,age:21},
+        {name:'yy',xuehao:201317,age:10},
+      ]
+    }
+
+  //  删除
+  $scope.delStu = function(id){
+      $scope.students = this.students.filter(function(v,i){
+        return i != id;
+      })
+       this.saveData();
+  }
+
+  // 增加
+  $scope.addStu = function(){
+     var xuehao =  Math.max.apply('',$scope.students.map( function(v,k){
+           return v.xuehao;
+       }
+     ))+1;
+     var stu =
+       {name:'',
+       xuehao:xuehao,
+       age:'',
+     };
+     this.students.push(stu);
+     this.saveData();
+  }
+}])
+</script>
+</html>
